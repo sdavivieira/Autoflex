@@ -1,0 +1,17 @@
+﻿@model Autoflex.Models.Products.Product
+
+<h2>Criar Produto</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name">Nome</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Price">Preço</label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success mt-2">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Voltar</a>
+</form>
+@await Html.PartialAsync("_ErrorModal")

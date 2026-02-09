@@ -1,0 +1,32 @@
+﻿@model Autoflex.Models.Products.Product
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Matéria-prima</th>
+            <th>Quantidade Necessária</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.RawMaterials.Any())
+        {
+            foreach (var assoc in Model.RawMaterials)
+            {
+                <tr data-product-id="@assoc.ProductId" data-raw-id="@assoc.RawMaterialId">
+                    <td>@assoc.RawMaterial.Name</td>
+                    <td>@assoc.RequiredQuantity</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm btnRemoveRawMaterial">Remover</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">Nenhuma matéria-prima associada</td>
+            </tr>
+        }
+    </tbody>
+</table>

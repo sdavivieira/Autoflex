@@ -1,0 +1,60 @@
+﻿@{
+	ViewData["Title"] = "Autoflex - Inventário & Produção";
+}
+
+<div class="container mt-4">
+	<div class="text-center mb-5">
+		<h1 class="display-5">Autoflex</h1>
+		<p class="lead">
+			Sistema de Controle de Inventário e Produção
+		</p>
+	</div>
+
+	<div class="row text-center">
+		<div class="col-md-4">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title">Produtos</h5>
+					<p class="card-text">
+						Gerenciar produtos e suas matérias-primas.
+					</p>
+					<a asp-controller="Product" asp-action="Index"
+					   class="btn btn-primary">
+						Ver Produtos
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title">Matérias-Primas</h5>
+					<p class="card-text">
+						Gerenciar estoque de matérias-primas.
+					</p>
+					<a asp-controller="RawMaterial" asp-action="Index"
+					   class="btn btn-primary">
+						Ver Matérias-Primas
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title">Produção</h5>
+					<p class="card-text">
+						Ver sugestões de produção baseadas no estoque.
+					</p>
+					<a asp-controller="Production" asp-action="Index"
+					   class="btn btn-success">
+						Ver Sugestões
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@await Html.PartialAsync("_ErrorModal")

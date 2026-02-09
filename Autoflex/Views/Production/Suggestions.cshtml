@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Autoflex.Models.Products.ProductionSuggestionDto>
+
+<h2>Produção sugerida</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade Produzível</th>
+            <th>Valor Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.TotalValue</td>
+            </tr>
+        }
+    </tbody>
+</table>

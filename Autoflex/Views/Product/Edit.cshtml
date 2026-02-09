@@ -1,0 +1,142 @@
+﻿@model Autoflex.Models.Products.Product
+
+@{
+    ViewBag.Title = "Editar Produto - " + Model.Name;
+    var availableRawMaterials = ViewBag.AvailableRawMaterials as List<Autoflex.Models.RawMaterials.RawMaterial> ?? new List<Autoflex.Models.RawMaterials.RawMaterial>();
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Editar Produto - @Model.Name</h2>
+
+    <form asp-action="Edit" method="post" id="formEditProduct">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label">Nome</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Price" class="form-label">Preço</label>
+                <input asp-for="Price" class="form-control" />
+            </div>
+        </div>
+
+        <hr />
+
+        <h4>Matérias-primas associadas</h4>
+        <div id="rawMaterialsGrid" class="table-responsive">
+            @await Html.PartialAsync("_RawMaterialsGrid", Model)
+        </div>
+
+        <hr />
+
+        <h4>Adicionar nova matéria-prima</h4>
+        <div class="row g-2 align-items-end mb-3">
+            <div class="col-md-6 col-sm-12">
+                <label for="selectedRawMaterialId" class="form-label">Matéria-prima</label>
+                <select id="selectedRawMaterialId" class="form-select">
+                    <option value="">Selecione...</option>
+                    @foreach (var rm in availableRawMaterials)
+                    {
+                        <option value="@rm.Id">@rm.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <label for="requiredQuantity" class="form-label">Quantidade Necessária</label>
+                <input type="number" id="requiredQuantity" min="1" class="form-control" placeholder="Quantidade" />
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <button type="button" id="btnAddRawMaterial" class="btn btn-success w-100">Adicionar</button>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary">Salvar Produto</button>
+            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        </div>
+    </form>
+
+    <div id="alertError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            var productId = @Model.Id;
+
+            function showAlert(message) {
+                $('#alertError').text(message).removeClass('d-none');
+            }
+
+            function hideAlert() {
+                $('#alertError').addClass('d-none').text('');
+            }
+
+            $('#btnAddRawMaterial').click(function () {
+                hideAlert();
+                var rawId = $('#selectedRawMaterialId').val();
+                var qty = $('#requiredQuantity').val();
+
+                if (!rawId || !qty) {
+                    showAlert('Selecione a matéria-prima e informe a quantidade!');
+                    return;
+                }
+
+                $.post('@Url.Action("Add", "ProductRawMaterial")', {
+                    productId: productId,
+                    selectedRawMaterialId: rawId,
+                    requiredQuantity: qty
+                }, function (resp) {
+                    if (resp.success) {
+                        refreshRawMaterialsGrid();
+                        $('#selectedRawMaterialId').val('');
+                        $('#requiredQuantity').val('');
+                    } else {
+                        showAlert(resp.message);
+                    }
+                });
+            });
+
+            $(document).on('click', '.btnRemoveRawMaterial', function () {
+                hideAlert();
+                var row = $(this).closest('tr');
+                var rawId = row.data('raw-id');
+
+                $.post('@Url.Action("Delete", "ProductRawMaterial")', {
+                    productId: productId,
+                    rawMaterialId: rawId
+                }, function (resp) {
+                    if (resp.success) refreshRawMaterialsGrid();
+                    else showAlert(resp.message);
+                });
+            });
+
+            $(document).on('click', '.btnUpdateRawMaterial', function () {
+                hideAlert();
+                var row = $(this).closest('tr');
+                var rawId = row.data('raw-id');
+                var qty = row.find('.txtUpdateQuantity').val();
+
+                $.post('@Url.Action("Update", "ProductRawMaterial")', {
+                    productId: productId,
+                    rawMaterialId: rawId,
+                    requiredQuantity: qty
+                }, function (resp) {
+                    if (resp.success) refreshRawMaterialsGrid();
+                    else showAlert(resp.message);
+                });
+            });
+
+            function refreshRawMaterialsGrid() {
+                $.get('@Url.Action("GetRawMaterials", "Product")', { id: productId }, function (html) {
+                    $('#rawMaterialsGrid').html(html);
+                });
+            }
+        });
+    </script>
+}
